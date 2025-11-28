@@ -17,17 +17,18 @@ export class PlatformStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: PlatformStackProps) {
     super(scope, id, props);
 
-    const { config } = props;
-    const domainName = config.domain;
+    const domainName = props.domain;
     const wwwDomainName = `www.${domainName}`;
-
+    if (!props.tags?.["project"])
+    {
+        cdk.Tags.of(this).add("project", props.project);
+    }
     // Add project and env tags to all resources in this stack
-    cdk.Tags.of(this).add("project", config.project);
 
     // Create Route53 Hosted Zone for main domain
     this.hostedZone = new route53.HostedZone(this, "HostedZone", {
       zoneName: domainName,
-      comment: `Hosted zone for ${config.project} website`,
+      comment: `Hosted zone for ${props.project} website`,
     });
 
     // Create S3 bucket for website hosting
@@ -47,7 +48,7 @@ export class PlatformStack extends cdk.Stack {
       this,
       "OAI",
       {
-        comment: `OAI for ${config.project} website`,
+        comment: `OAI for ${props.project} website`,
       }
     );
 
@@ -135,7 +136,7 @@ function handler(event) {
       priceClass: cloudfront.PriceClass.PRICE_CLASS_100,
       httpVersion: cloudfront.HttpVersion.HTTP2_AND_3,
       minimumProtocolVersion: cloudfront.SecurityPolicyProtocol.TLS_V1_2_2021,
-      comment: `CloudFront distribution for ${config.project} website`,
+      comment: `CloudFront distribution for ${props.project} website`,
     });
 
     // Create Route53 A record for apex domain pointing to CloudFront
@@ -157,57 +158,55 @@ function handler(event) {
     });
 
     // Deploy website content to S3 (if source path provided)
-    if (config.websiteSourcePath) {
-      new s3deploy.BucketDeployment(this, "DeployWebsite", {
-        sources: [s3deploy.Source.asset(config.websiteSourcePath)],
+    new s3deploy.BucketDeployment(this, "DeployWebsite", {
+        sources: [s3deploy.Source.asset("website")],
         destinationBucket: this.websiteBucket,
         distribution: this.distribution,
         distributionPaths: ["/*"],
         prune: false,
       });
-    }
 
     // Outputs - organized by deployment steps
     new cdk.CfnOutput(this, "Step1NameServers", {
       value: cdk.Fn.join(", ", this.hostedZone.hostedZoneNameServers || []),
       description: `[ACTION REQUIRED] Configure these name servers at your domain registrar for ${domainName}`,
-      exportName: `${config.project}-NameServers`,
+      exportName: `${props.project}-NameServers`,
     });
 
     new cdk.CfnOutput(this, "Step2HostedZoneId", {
       value: this.hostedZone.hostedZoneId,
       description: "Route53 Hosted Zone ID (for reference)",
-      exportName: `${config.project}-HostedZoneId`,
+      exportName: `${props.project}-HostedZoneId`,
     });
 
     new cdk.CfnOutput(this, "WebsiteURL", {
       value: `https://${domainName}`,
       description: "Website URL (available after DNS propagation)",
-      exportName: `${config.project}-WebsiteURL`,
+      exportName: `${props.project}-WebsiteURL`,
     });
 
     new cdk.CfnOutput(this, "WwwWebsiteURL", {
       value: `https://${wwwDomainName}`,
       description: "WWW Website URL (redirects to apex domain)",
-      exportName: `${config.project}-WwwWebsiteURL`,
+      exportName: `${props.project}-WwwWebsiteURL`,
     });
 
     new cdk.CfnOutput(this, "CloudFrontDistributionId", {
       value: this.distribution.distributionId,
       description: "CloudFront distribution ID (for cache invalidation)",
-      exportName: `${config.project}-DistributionId`,
+      exportName: `${props.project}-DistributionId`,
     });
 
     new cdk.CfnOutput(this, "CloudFrontDomainName", {
       value: this.distribution.distributionDomainName,
       description: "CloudFront distribution domain (accessible immediately)",
-      exportName: `${config.project}-CloudFrontDomain`,
+      exportName: `${props.project}-CloudFrontDomain`,
     });
 
     new cdk.CfnOutput(this, "S3BucketName", {
       value: this.websiteBucket.bucketName,
       description: "S3 bucket name for website content",
-      exportName: `${config.project}-WebsiteBucket`,
+      exportName: `${props.project}-WebsiteBucket`,
     });
   }
 }

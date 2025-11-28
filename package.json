@@ -1,23 +1,44 @@
 {
-  "name": "promo-deploy",
+  "name": "@prosoftsolutions/platform-infra",
   "version": "1.0.0",
-  "description": "Deploy basic infrastructure to AWS",
+  "description": "AWS CDK infrastructure components for platform deployment",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc",
-    "deploy": "npm run build && cdk deploy --profile pss",
+    "deploy": "npm run build && cdk deploy",
     "cdk": "cdk",
     "prepublishOnly": "npm run build"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "aws",
+    "cdk",
+    "infrastructure",
+    "cloudfront",
+    "s3",
+    "route53"
+  ],
+  "author": "ProSoft Solutions",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/prosoftsolutions/platform-infra.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
     "typescript": "^5.3.0",
     "aws-cdk": "^2.170.0",
     "@types/node": "^20.0.0",
     "ts-node": "^10.9.0"
+  },
+  "peerDependencies": {
+    "aws-cdk-lib": "^2.170.0",
+    "constructs": "^10.0.0"
   },
   "dependencies": {
     "aws-cdk-lib": "^2.170.0",
