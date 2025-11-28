@@ -4,6 +4,8 @@ import {PlatformStack} from "./platform-stack";
 
 // Re-export types and classes
 export { PlatformStack } from "./platform-stack";
+export { deployWebsite } from "./deploy-website";
+export { DeployWebsiteOptions } from "./types";
 
 function BuildStack(props: PlatformStackProps): cdk.App {
     const app = new cdk.App();

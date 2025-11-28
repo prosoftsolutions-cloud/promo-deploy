@@ -37,6 +37,7 @@
     "typescript": "^5.3.0",
     "aws-cdk": "^2.170.0",
     "@types/node": "^20.0.0",
+    "@types/mime-types": "^2.1.4",
     "ts-node": "^10.9.0"
   },
   "peerDependencies": {
@@ -45,6 +46,11 @@
   },
   "dependencies": {
     "aws-cdk-lib": "^2.170.0",
-    "constructs": "^10.0.0"
+    "constructs": "^10.0.0",
+    "@aws-sdk/client-cloudfront": "^3.600.0",
+    "@aws-sdk/client-s3": "^3.600.0",
+    "@aws-sdk/credential-providers": "^3.600.0",
+    "s3-sync-client": "^4.3.1",
+    "mime-types": "^2.1.35"
   }
 }

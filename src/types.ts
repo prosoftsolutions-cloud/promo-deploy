@@ -5,3 +5,9 @@ export interface PlatformStackProps extends cdk.StackProps {
     domain: string;
     cdkBucketName: string
 }
+
+export interface DeployWebsiteOptions {
+  bucketName: string;
+  profile?: string;
+  websitePath?: string;
+}
