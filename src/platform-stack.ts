@@ -8,6 +8,7 @@ import * as acm from "aws-cdk-lib/aws-certificatemanager";
 import * as s3deploy from "aws-cdk-lib/aws-s3-deployment";
 import { Construct } from "constructs";
 import { PlatformStackProps } from "./types";
+import {getWebsiteBucketName} from "./website-bucket-name";
 
 export class PlatformStack extends cdk.Stack {
   public readonly distribution: cloudfront.Distribution;
@@ -33,7 +34,7 @@ export class PlatformStack extends cdk.Stack {
 
     // Create S3 bucket for website hosting
     this.websiteBucket = new s3.Bucket(this, "WebsiteBucket", {
-      bucketName: `${domainName.toLowerCase()}-website`,
+      bucketName: getWebsiteBucketName(domainName),
       websiteIndexDocument: "index.html",
       websiteErrorDocument: "error.html",
       publicReadAccess: false,
