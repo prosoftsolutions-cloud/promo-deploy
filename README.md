@@ -41,6 +41,35 @@ The infrastructure creates a fully managed static website hosting solution:
 npm install @prosoftsolutions/platform-infra
 ```
 
+### Host Project Setup
+
+After installing the package, add these scripts to your project's `package.json`:
+
+```json
+{
+  "scripts": {
+    "deploy": "cdk deploy --profile abc",
+    "upload": "upload-website --domain example.com --profile abc"
+  }
+}
+```
+
+**Usage:**
+
+```bash
+# Deploy infrastructure
+npm run deploy
+
+# Upload website content
+npm run upload
+
+# Override arguments at runtime
+npm run upload -- --path ./dist
+npm run deploy -- --require-approval never
+```
+
+Command-line arguments override script defaults (later arguments take precedence).
+
 ### Local Development
 
 ```bash
@@ -125,18 +154,15 @@ cdk bootstrap aws://ACCOUNT_ID/us-east-1 --profile abc
 
 ### 3. Deploy the Stack
 
-```bash
-# Using default AWS credentials
-npm run deploy
+Use the `deploy` script configured in your project (see [Host Project Setup](#host-project-setup)):
 
-# Using a specific AWS profile
-npm run deploy -- --profile abc
+```bash
+npm run deploy
 ```
 
 Or manually:
 
 ```bash
-npm run build
 cdk deploy --profile abc
 ```
 
@@ -173,16 +199,15 @@ DNS propagation can take up to 48 hours. The ACM certificate will auto-validate 
 
 ### Via CLI Command (Recommended)
 
-The package provides a CLI command for uploading website content:
+Use the `upload` script configured in your project (see [Host Project Setup](#host-project-setup)):
 
 ```bash
-# Using npx (after npm install)
-npx upload-website --domain example.com --profile abc
+npm run upload
+```
 
-# Using npm script (in this repo)
-npm run upload -- --domain example.com --profile abc
+Or call directly via npx:
 
-# With custom website folder
+```bash
 npx upload-website --domain example.com --profile abc --path ./dist
 ```
 
@@ -216,10 +241,10 @@ await deployWebsite({
 
 ### Via Redeployment
 
-Update files in `website/` and redeploy:
+Update files in `website/` and redeploy using the `deploy` script configured in your project (see [Host Project Setup](#host-project-setup)):
 
 ```bash
-npm run deploy -- --profile abc
+npm run deploy
 ```
 
 ### Via AWS CLI (Manual)
