@@ -6,6 +6,7 @@ import * as route53 from "aws-cdk-lib/aws-route53";
 import * as targets from "aws-cdk-lib/aws-route53-targets";
 import * as acm from "aws-cdk-lib/aws-certificatemanager";
 import * as s3deploy from "aws-cdk-lib/aws-s3-deployment";
+import * as ssm from "aws-cdk-lib/aws-ssm";
 import { Construct } from "constructs";
 import { PlatformStackProps } from "./types";
 import {getWebsiteBucketName} from "./website-bucket-name";
@@ -166,6 +167,13 @@ function handler(event) {
         distributionPaths: ["/*"],
         prune: false,
       });
+
+    // Store root domain in Parameter Store
+    new ssm.StringParameter(this, "RootDomainParameter", {
+      parameterName: `/${props.project}/root-domain`,
+      stringValue: props.domain,
+      description: `Root domain for ${props.project}`,
+    });
 
     // Outputs - organized by deployment steps
     new cdk.CfnOutput(this, "Step1NameServers", {
